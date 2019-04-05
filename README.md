@@ -1,7 +1,7 @@
-![DELL XPS 9570](https://github.com/gocho1/dell-XPS-9570-conf/raw/master/xps9570.png)<br>
+![DELL XPS 9570](https://github.com/gocho1/laptop-conf/raw/master/xps9570/ubuntu1804LTS/xps9570.png)<br>
 
 This repo is intented for my own usage and corresponds to my needs.<br>
-Please note that is heavily based on things found on internet.<br>
+Please note that is heavily based on things found on internet, like [gloveboxes github page](https://gloveboxes.github.io/Ubuntu-for-Azure-Developers/docs/dellxps15.html), and other linked pages below<br>
 
 # Ubuntu installation
 As I want to keep dual boot possible but also want to encrypt my data, I could not use the Ubuntu installation process feature to encrypt my disk (because it uses all the disk and prevent dual boot)<br><br>
@@ -135,7 +135,7 @@ If everything is fine, it should ask your LUKS passphrase then launch Grub ! <br
 
 ## Install some softs for you daily work (at least curl is needed for the next steps)
 ```
-	sudo apt install -y vim curl zsh git fonts-hack-ttf gnome-tweaks libinput-tools libxdo-dev g++
+	sudo apt install -y vim curl zsh git fonts-hack-ttf 
 	chsh -s /usr/bin/zsh 
 ```
 
@@ -145,10 +145,17 @@ In order to do that, I used the excellent [JackHack96 script](https://github.com
 	sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/dell-xps-9570-ubuntu-respin/master/xps-tweaks.sh)"
 ```
 
-## Change the grub theme to fit 4k display (if you have one)
+# Change the grub theme to fit 4k display (if you have one)
 This theme has been designed by [arjmacedo](https://github.com/arjmacedo/grub_theme_hidpi)
 ```
-	sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/gocho1/dell-XPS-9570-conf/master/change-grub-theme4k.sh)"
+	sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/gocho1/laptop-conf/master/xps9570/ubuntu1804LTS/change-grub-theme4k.sh)"
+```
+
+## Add experimental feature of gnome to get different scale for multiple monitors setup
+This way, you can use an external monitor properly with no DPI side effects.<br>
+Please note that you need to change the rendering server to _Ubuntu with Wayland_ on the login screen (click on the wheel next to _Login_ button
+```
+	gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
 ```
 
 ## Install a cool font to handle prompt pictos (used for zsh prompts)
@@ -178,20 +185,21 @@ Then you can start zsh
 ```
 Zsh will prompt you to install some plugins.
 
-## Add experimental feature of gnome to get different scale for multiple monitors setup
-This way, you can use an external monitor properly with no DPI side effects.<br>
-Please note that you need to change the rendering server to _Ubuntu with Wayland_ on the login screen (click on the wheel next to _Login_ button
-Also note that this feature is experimental and may be discontinued in further releases
-```
-	gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
-```
-
-## Add swipe gestures to change workspaces
+## Add gesture swipes to switch workspaces
 This part is based on [Hikari9 comfortable-swipe](https://github.com/Hikari9/comfortable-swipe)
+
+### Installation
 ```
-	
-	
+	sudo apt install -y libinput-tools libxdo-dev g++
+	git clone https://github.com/Hikari9/comfortable-swipe.git --depth 1 /tmp
+	bash /tmp/comfortable-swipe install && rm -rf /tmp/comfortable-swipe
 ```
+### Run
+```
+	sudo gpasswd -a $USER $(ls -l /dev/input/event* | awk '{print $4}' | head --line=1)
+	comfortable-swipe autostart
+```
+If you need more details or config details about comfortable-swipe, then go to [Hikari9 github](https://github.com/Hikari9/comfortable-swipe)
 
 # Optional
 
