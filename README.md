@@ -189,7 +189,7 @@ This part is based on [Hikari9 comfortable-swipe](https://github.com/Hikari9/com
 ```
 	sudo apt install -y libinput-tools libxdo-dev g++
 	git clone https://github.com/Hikari9/comfortable-swipe.git --depth 1 /tmp/comfortable-swipe
-	bash /tmp/comfortable-swipe install && rm -rf /tmp/comfortable-swipe
+	bash /tmp/comfortable-swipe/install && rm -rf /tmp/comfortable-swipe
 ```
 ### Run
 ```
