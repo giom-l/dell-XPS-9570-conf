@@ -29,18 +29,15 @@ Then press _F10_ to load the kernel<br>
 
 ##Create partitions 
 
- Do not launch the installation now, as you need to create partitions before
+ ** Do not launch the installation now, as you need to create partitions before **
 
-```
-sudo gparted
-```
  - open a terminal (Ctrl+Alt+t)
- - run _$ sudo gparted_
+ - run __$ sudo gparted__
  - delete your existing Ubuntu and other outdated partitions
 	I’m assuming that your drive’s partition table uses EFI and not MBR, otherwise you might need to adjust steps below (especially about creating many primary partitions)
- - create a new primary partition with 500MB-1GB size, formatted to _ext4_, and labelled as _boot_; make note of its partition path (e.g. /dev/sda2 or /dev/nvme0n1p3), which I’ll hereby refer to as </dev/DEV_BOOT>
- - create another new primary partition, formatted to _ext4_, and labelled as _rootfs_. I’ll hereby refer its partition path as </dev/DEV_ROOTFS>
- - optionally, you may wish to preserve your home folder or personal data on a separate encrypted partition in case your Linux OS breaks; in this case, create a third new primary partition, formatted to _ext4_, and labelled as home; I’ll hereby refer its partition path as <dev/DEV_HOME>
+ - create a new primary partition with 500MB-1GB size, formatted to __ext4__, and labelled as __boot__; make note of its partition path (e.g. /dev/sda2 or /dev/nvme0n1p3), which I’ll hereby refer to as **_</dev/DEV_BOOT>_**
+ - create another new primary partition, formatted to __ext4__, and labelled as __rootfs__. I’ll hereby refer its partition path as **_</dev/DEV_ROOTFS>_**
+ - optionally, you may wish to preserve your home folder or personal data on a separate encrypted partition in case your Linux OS breaks; in this case, create a third new primary partition, formatted to __ext4__, and labelled as home; I’ll hereby refer its partition path as **_<dev/DEV_HOME>_**
  - if you wish to create a swap partition, then do so now (and you should probably encrypt it by adapting the steps below or from here)
  - execute the partition changes by clicking on the Checkmark icon, then close GParted once done
 
@@ -50,12 +47,12 @@ My installation looks like <br>
  - /home : all space left
 
 ## Create encrypted volumes using LUKS and LVM
-We will now create LUKS containers cryptroot and crypthome on </dev/DEV_ROOTFS>  and</dev/DEV_HOME>, initialize LVM physical volumes lvroot and lvhome, and configure logical volumes vgroot and vghome. Run the following commands in a terminal:
+We will now create LUKS containers cryptroot and crypthome on **_</dev/DEV_ROOTFS>_**  and **_</dev/DEV_HOME>_**, initialize LVM physical volumes lvroot and lvhome, and configure logical volumes vgroot and vghome. Run the following commands in a terminal:
 ```
-    $ sudo cryptsetup luksFormat </dev/DEV_ROOTFS>
-    $ sudo cryptsetup luksOpen </dev/DEV_ROOTFS> cryptroot
-    $ sudo cryptsetup luksFormat </dev/DEV_HOME>
-    $ sudo cryptsetup luksOpen </dev/DEV_HOME> crypthome
+    $ sudo cryptsetup luksFormat **_</dev/DEV_ROOTFS>__*
+    $ sudo cryptsetup luksOpen **_</dev/DEV_ROOTFS>_** cryptroot
+    $ sudo cryptsetup luksFormat **_</dev/DEV_HOME>_**
+    $ sudo cryptsetup luksOpen **_</dev/DEV_HOME>_** crypthome
 ```
 At this point, if you want to be really secure, overwrite the containers to erase existing content (which will take some time; I didn’t do this):
 ```
@@ -72,18 +69,18 @@ Continuing:
     $ sudo lvcreate -n lvhome -l 100%FREE vghome
 ```
 After these steps, you will have the following mounted encrypted partitions: /dev/mapper/vgroot-lvroot and /dev/mapper/vghome-lvhome.<br>
-NB : Don't worry if you can't see them for now, it's normal as partitions are not mounted yet.<br>
-NB2 : if you previously created these encrypted partitions but failed the installer, you only need to run the cryptsetup luksOpen ... commands to remount the existing partitions.<br>
+**NB : Don't worry if you can't see them for now, it's normal as partitions are not mounted yet.**<br>
+**NB2 : if you previously created these encrypted partitions but failed the installer, you only need to run the cryptsetup luksOpen ... commands to remount the existing partitions.**<br>
 
 ## Go through the Ubuntu installer process
 
-double-clicking the _Install Ubuntu_ icon on the desktop<br>
+double-clicking the __Install Ubuntu__ icon on the desktop<br>
 choose your language, keyboard layout, optionally configure WiFi settings, choose installation options (I chose Normal installation and checked boxes for Download updates ... and Install third-party software ...)<br>
-on the _Installation type_ screen, select _Something else_<br><br>
+on the __Installation type__ screen, select __Something else__<br><br>
 
 In the next screen, configure the following partitions by double-clicking on their paths:<br><br>
 
-    </dev/DEV_BOOT>: use as ext4, format, mount as /boot<br>
+    **_</dev/DEV_BOOT>_**: use as ext4, format, mount as /boot<br>
     /dev/mapper/vgroot-lvroot: use as ext4, format, mount as /<br>
     /dev/mapper/vghome-lvhome: use as ext4, format, mount as /home<br>
     if you have a swap partition, use as swap<br>
@@ -91,7 +88,7 @@ In the next screen, configure the following partitions by double-clicking on the
 
 The rest of the installer process should be straight-forward.<br>
 
-DO NOT REBOOT after the installer finishes, and instead click Continue testing.<br>
+**DO NOT REBOOT after the installer finishes, and instead click Continue testing.**<br>
 
 ## Update kernel to load encrypted partitions
 
@@ -108,7 +105,7 @@ Next, mount the installed OS on /mnt and chroot into it:
     $ sudo mount --bind /dev /mnt/dev
     $ sudo chroot /mnt
 ```
-	The following commands are in the chrooted environment, and you are root in it. So _sudo_ is not needed anymore.
+	The following commands are in the chrooted environment, and you are root in it. So __sudo__ is not needed anymore.
 ```    
     $ > mount -t proc proc /proc
     $ > mount -t sysfs sys /sys
@@ -118,7 +115,7 @@ Now, create a file named /etc/crypttab in the chrooted environment, e.g.
 ```
     $ > sudo nano /etc/crypttab
 ```
-and write the following lines, while replacing <UUID_ROOTFS> and <UUID_HOME>:
+and write the following lines, while replacing **<UUID_ROOTFS>** and **<UUID_HOME>**:
 ```
 	# <target name> <source device> <key file> <options>
 	cryptroot UUID=<UUID_ROOTFS> none luks,discard
@@ -209,7 +206,7 @@ If you need more details or config details about comfortable-swipe, then go to [
 	curl -fsSL https://get.docker.com/ | sh
 ```
 As displayed at the end of the previous script, you can add your user in docker group if you want to use docker without sudoing all the time<br>
-Warning : Please note that this action will grant the ability to run containers which can be used to obtain root privileges on the docker host.
+**Warning : Please note that this action will grant the ability to run containers which can be used to obtain root privileges on the docker host.**
 ```
 	sudo groupadd docker
 	sudo usermod -aG docker $USER
