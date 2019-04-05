@@ -198,8 +198,23 @@ This part is based on [Hikari9 comfortable-swipe](https://github.com/Hikari9/com
 ```
 If you need more details or config details about comfortable-swipe, then go to [Hikari9 github](https://github.com/Hikari9/comfortable-swipe)
 
-## Install tileshell 
-With this [gnome shell extension](https://github.com/emasab/shelltile/blob/quicktiling/README.md), you can split your screen in 4 shells easily
+## Install Shelltile
+With this [gnome shell extension](https://github.com/emasab/shelltile/blob/quicktiling/README.md), you can split your screen in 4 parts easily
+Installation
+```
+wget -O /tmp/shelltile.zip https://github.com/emasab/shelltile/archive/2.0.0.zip
+unzip /tmp/shelltile.zip -d ~/.local/share/gnome-shell/extensions/ && rm -f /tmp/shelltile.zip
+```
+Then relaunch gnome Shell (Note that if you are using Wayland, you have to log out and log in your session as relaunching gnome shell is not allowed)
+```
+Alt+F2 then r then Enter
+```
+Activate ShellTile in gnome-tweaks (formerly known as gnome-tweak-tools) and configure it as you want.
+```
+gnome-tweaks
+In `Extensions`, activate ShellTile
+```
+**In case ShellTile does not appear in extensions : Verify that the value UUID in metadata.json in your extension corresponds to the name of the extension folder. Otherwise, rename the folder.**
 
 # Optional
 
