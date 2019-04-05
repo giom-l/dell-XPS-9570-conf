@@ -6,7 +6,7 @@ Please note that is heavily based on things found on internet, like [gloveboxes 
 # Ubuntu installation
 As I want to keep dual boot possible but also want to encrypt my data, I could not use the Ubuntu installation process feature to encrypt my disk (because it uses all the disk and prevent dual boot)<br><br>
 
-The folling sequence is heavily based on [this tutorial](http://www.cim.mcgill.ca/~anqixu/blog/index.php/2018/06/20/install-18-04-on-encrypted-partitions-xps15-cuda/)<br>
+The folling sequence is heavily based on [Anqi Xu tutorial](http://www.cim.mcgill.ca/~anqixu/blog/index.php/2018/06/20/install-18-04-on-encrypted-partitions-xps15-cuda/)<br>
 
 ## Windows prerequisite
 In order to install Ubuntu, you need to make some room for it.<br>
@@ -15,44 +15,44 @@ Then select the larger partition (whatever its name is) and righ click to shrink
 No need to format now, it will be done after :)<br>
 
 ## Disable Secure boot
-Reboot your laptop and press _F12_ when Dell logo appears.<br>
-Select _Secure Boot_ and Uncheck _Enable_.<br>
-Then _Apply_ and _Exit_<br>
+Reboot your laptop and press **F12** when Dell logo appears.<br>
+Select **Secure Boot** and Uncheck **Enable**.<br>
+Then **Apply** and **Exit**<br>
 
 ## Boot on Ubuntu USB stick
-Non verified information : It maybe required to add _nomodeset_ boot option to achieve the installation (I didn't try without...)<br>
-To do that, after Grub loads, move the cursor to _Try Ubuntu_<br>
-Then press _e_ to edit the boot options<br>
-find the line containing _linux /boot/vmlinuz..._ and add _nomodeset_ right after _splash_<br>
-Then press _F10_ to load the kernel<br>
+Non verified information : It maybe required to add `nomodeset` boot option to achieve the installation (I didn't try without...)<br>
+To do that, after Grub loads, move the cursor to **Try Ubuntu**<br>
+Then press **e** to edit the boot options<br>
+find the line containing `linux /boot/vmlinuz...` and add `nomodeset` right after `splash`<br>
+Then press **F10** to load the kernel<br>
 
 
 ## Create partitions 
 
- ** Do not launch the installation now, as you need to create partitions before **
+ **Do not launch the installation now, as you need to create partitions before**
 
  - open a terminal (Ctrl+Alt+t)
- - run __$ sudo gparted__
+ - run `$ sudo gparted`
  - delete your existing Ubuntu and other outdated partitions
 	I’m assuming that your drive’s partition table uses EFI and not MBR, otherwise you might need to adjust steps below (especially about creating many primary partitions)
- - create a new primary partition with 500MB-1GB size, formatted to __ext4__, and labelled as __boot__; make note of its partition path (e.g. /dev/sda2 or /dev/nvme0n1p3), which I’ll hereby refer to as **_</dev/DEV_BOOT>_**
- - create another new primary partition, formatted to __ext4__, and labelled as __rootfs__. I’ll hereby refer its partition path as **_</dev/DEV_ROOTFS>_**
- - optionally, you may wish to preserve your home folder or personal data on a separate encrypted partition in case your Linux OS breaks; in this case, create a third new primary partition, formatted to __ext4__, and labelled as home; I’ll hereby refer its partition path as **_<dev/DEV_HOME>_**
+ - create a new primary partition with 500MB-1GB size, formatted to `ext4`, and labelled as `boot`; make note of its partition path (e.g. /dev/sda2 or /dev/nvme0n1p3), which I’ll hereby refer to as **_</dev/DEV_BOOT>_**
+ - create another new primary partition, formatted to `ext4`, and labelled as `rootfs`. I’ll hereby refer its partition path as **_</dev/DEV_ROOTFS>_**
+ - optionally, you may wish to preserve your home folder or personal data on a separate encrypted partition in case your Linux OS breaks; in this case, create a third new primary partition, formatted to `ext4`, and labelled as home; I’ll hereby refer its partition path as **_<dev/DEV_HOME>_**
  - if you wish to create a swap partition, then do so now (and you should probably encrypt it by adapting the steps below or from here)
  - execute the partition changes by clicking on the Checkmark icon, then close GParted once done
 
 My installation looks like <br>
- - /boot : 1 Go
- - / : 65 Go
- - /home : all space left
+ - `/boot` : 1 Go
+ - `/` : 65 Go
+ - `/home` : all space left
 
 ## Create encrypted volumes using LUKS and LVM
-We will now create LUKS containers cryptroot and crypthome on **_</dev/DEV_ROOTFS>_**  and **_</dev/DEV_HOME>_**, initialize LVM physical volumes lvroot and lvhome, and configure logical volumes vgroot and vghome. Run the following commands in a terminal:
+We will now create LUKS containers cryptroot and crypthome on **_</dev/DEV_ROOTFS>_**  and **_</dev/DEV_HOME>_**, initialize LVM physical volumes `lvroot` and `lvhome`, and configure logical volumes `vgroot` and `vghome`. Run the following commands in a terminal:
 ```
-    $ sudo cryptsetup luksFormat **_</dev/DEV_ROOTFS>__*
-    $ sudo cryptsetup luksOpen **_</dev/DEV_ROOTFS>_** cryptroot
-    $ sudo cryptsetup luksFormat **_</dev/DEV_HOME>_**
-    $ sudo cryptsetup luksOpen **_</dev/DEV_HOME>_** crypthome
+    $ sudo cryptsetup luksFormat </dev/DEV_ROOTFS>
+    $ sudo cryptsetup luksOpen </dev/DEV_ROOTFS> cryptroot
+    $ sudo cryptsetup luksFormat </dev/DEV_HOME>
+    $ sudo cryptsetup luksOpen </dev/DEV_HOME> crypthome
 ```
 At this point, if you want to be really secure, overwrite the containers to erase existing content (which will take some time; I didn’t do this):
 ```
@@ -68,23 +68,23 @@ Continuing:
     $ sudo vgcreate vghome /dev/mapper/crypthome
     $ sudo lvcreate -n lvhome -l 100%FREE vghome
 ```
-After these steps, you will have the following mounted encrypted partitions: /dev/mapper/vgroot-lvroot and /dev/mapper/vghome-lvhome.<br>
+After these steps, you will have the following mounted encrypted partitions: `/dev/mapper/vgroot-lvroot` and `/dev/mapper/vghome-lvhome`.<br>
 **NB : Don't worry if you can't see them for now, it's normal as partitions are not mounted yet.**<br>
 **NB2 : if you previously created these encrypted partitions but failed the installer, you only need to run the cryptsetup luksOpen ... commands to remount the existing partitions.**<br>
 
 ## Go through the Ubuntu installer process
 
-double-clicking the __Install Ubuntu__ icon on the desktop<br>
+double-clicking the **Install Ubuntu** icon on the desktop<br>
 choose your language, keyboard layout, optionally configure WiFi settings, choose installation options (I chose Normal installation and checked boxes for Download updates ... and Install third-party software ...)<br>
-on the __Installation type__ screen, select __Something else__<br><br>
+on the **Installation type** screen, select **Something else**<br><br>
 
 In the next screen, configure the following partitions by double-clicking on their paths:<br><br>
 
     **_</dev/DEV_BOOT>_**: use as ext4, format, mount as /boot<br>
-    /dev/mapper/vgroot-lvroot: use as ext4, format, mount as /<br>
-    /dev/mapper/vghome-lvhome: use as ext4, format, mount as /home<br>
+    `/dev/mapper/vgroot-lvroot`: use as ext4, format, mount as /<br>
+    `/dev/mapper/vghome-lvhome`: use as ext4, format, mount as /home<br>
     if you have a swap partition, use as swap<br>
-    then, choose your entire drive as the target device for boot loader installation, e.g. choose /dev/nvme0n1 or /dev/sda, and not partitions like /dev/nvme0n1p6 or /dev/sda3<br><br>
+    then, choose your entire drive as the target device for boot loader installation, e.g. choose `/dev/nvme0n1` or `/dev/sda`, and not partitions like `/dev/nvme0n1p6` or `/dev/sda3`<br><br>
 
 The rest of the installer process should be straight-forward.<br>
 
@@ -97,7 +97,7 @@ First, note down the UUIDs of your encrypted partitions by running the following
     $ sudo blkid </dev/DEV_ROOTFS>
     $ sudo blkid </dev/DEV_HOME>
 ```
-Next, mount the installed OS on /mnt and chroot into it:
+Next, mount the installed OS on `/mnt` and `chroot` into it:
 ```
     $ sudo mount /dev/mapper/vgroot-lvroot /mnt
     $ sudo mount </dev/DEV_BOOT> /mnt/boot
@@ -105,17 +105,17 @@ Next, mount the installed OS on /mnt and chroot into it:
     $ sudo mount --bind /dev /mnt/dev
     $ sudo chroot /mnt
 ```
-	The following commands are in the chrooted environment, and you are root in it. So __sudo__ is not needed anymore.
+	The following commands are in the chrooted environment, and you are root in it. So `sudo` is not needed anymore.
 ```    
     $ > mount -t proc proc /proc
     $ > mount -t sysfs sys /sys
     $ > mount -t devpts devpts /dev/pts
 ```
-Now, create a file named /etc/crypttab in the chrooted environment, e.g.
+Now, create a file named `/etc/crypttab` in the chrooted environment, e.g.
 ```
     $ > sudo nano /etc/crypttab
 ```
-and write the following lines, while replacing **<UUID_ROOTFS>** and **<UUID_HOME>**:
+and write the following lines, while replacing **_<UUID_ROOTFS>_** and **_<UUID_HOME>_**:
 ```
 	# <target name> <source device> <key file> <options>
 	cryptroot UUID=<UUID_ROOTFS> none luks,discard
@@ -150,7 +150,7 @@ This theme has been designed by [arjmacedo](https://github.com/arjmacedo/grub_th
 
 ## Add experimental feature of gnome to get different scale for multiple monitors setup
 This way, you can use an external monitor properly with no DPI side effects.<br>
-Please note that you need to change the rendering server to _Ubuntu with Wayland_ on the login screen (click on the wheel next to _Login_ button
+Please note that you need to change the rendering server to **Ubuntu with Wayland** on the login screen (click on the wheel next to **Login** button
 ```
 	gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
 ```
