@@ -198,6 +198,9 @@ This part is based on [Hikari9 comfortable-swipe](https://github.com/Hikari9/com
 ```
 If you need more details or config details about comfortable-swipe, then go to [Hikari9 github](https://github.com/Hikari9/comfortable-swipe)
 
+## Install tileshell 
+With this [gnome shell extension](https://github.com/emasab/shelltile/blob/quicktiling/README.md), you can split your screen in 4 shells easily
+
 # Optional
 
 ## Install docker if you need it
