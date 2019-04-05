@@ -145,18 +145,10 @@ In order to do that, I used the excellent [JackHack96 script](https://github.com
 	sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/dell-xps-9570-ubuntu-respin/master/xps-tweaks.sh)"
 ```
 
-# Change the grub theme to fit 4k display (if you have one)
+## Change the grub theme to fit 4k display (if you have one)
 This theme has been designed by [arjmacedo](https://github.com/arjmacedo/grub_theme_hidpi)
 ```
 	sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/gocho1/dell-XPS-9570-conf/master/change-grub-theme4k.sh)"
-```
-
-## Add experimental feature of gnome to get different scale for multiple monitors setup
-This way, you can use an external monitor properly with no DPI side effects.<br>
-Please note that you need to change the rendering server to _Ubuntu with Wayland_ on the login screen (click on the wheel next to _Login_ button
-Also note that this feature is experimental and may be discontinued in further releases
-```
-	gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
 ```
 
 ## Install a cool font to handle prompt pictos (used for zsh prompts)
@@ -186,6 +178,13 @@ Then you can start zsh
 ```
 Zsh will prompt you to install some plugins.
 
+## Add experimental feature of gnome to get different scale for multiple monitors setup
+This way, you can use an external monitor properly with no DPI side effects.<br>
+Please note that you need to change the rendering server to _Ubuntu with Wayland_ on the login screen (click on the wheel next to _Login_ button
+Also note that this feature is experimental and may be discontinued in further releases
+```
+	gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+```
 
 # Optional
 
