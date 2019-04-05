@@ -135,7 +135,7 @@ If everything is fine, it should ask your LUKS passphrase then launch Grub ! <br
 
 ## Install some softs for you daily work (at least curl is needed for the next steps)
 ```
-	sudo apt install -y vim curl zsh git fonts-hack-ttf
+	sudo apt install -y vim curl zsh git fonts-hack-ttf gnome-tweaks libinput-tools libxdo-dev g++
 	chsh -s /usr/bin/zsh 
 ```
 
@@ -184,6 +184,13 @@ Please note that you need to change the rendering server to _Ubuntu with Wayland
 Also note that this feature is experimental and may be discontinued in further releases
 ```
 	gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+```
+
+## Add swipe gestures to change workspaces
+This part is based on [Hikari9 comfortable-swipe](https://github.com/Hikari9/comfortable-swipe)
+```
+	
+	
 ```
 
 # Optional
