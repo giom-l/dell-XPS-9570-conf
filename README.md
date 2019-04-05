@@ -27,7 +27,7 @@ find the line containing _linux /boot/vmlinuz..._ and add _nomodeset_ right afte
 Then press _F10_ to load the kernel<br>
 
 
-##Create partitions 
+## Create partitions 
 
  ** Do not launch the installation now, as you need to create partitions before **
 
