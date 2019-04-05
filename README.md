@@ -49,24 +49,24 @@ My installation looks like <br>
 ## Create encrypted volumes using LUKS and LVM
 We will now create LUKS containers cryptroot and crypthome on **_</dev/DEV_ROOTFS>_**  and **_</dev/DEV_HOME>_**, initialize LVM physical volumes `lvroot` and `lvhome`, and configure logical volumes `vgroot` and `vghome`. Run the following commands in a terminal:
 ```
-    $ sudo cryptsetup luksFormat </dev/DEV_ROOTFS>
-    $ sudo cryptsetup luksOpen </dev/DEV_ROOTFS> cryptroot
-    $ sudo cryptsetup luksFormat </dev/DEV_HOME>
-    $ sudo cryptsetup luksOpen </dev/DEV_HOME> crypthome
+sudo cryptsetup luksFormat </dev/DEV_ROOTFS>
+sudo cryptsetup luksOpen </dev/DEV_ROOTFS> cryptroot
+sudo cryptsetup luksFormat </dev/DEV_HOME>
+sudo cryptsetup luksOpen </dev/DEV_HOME> crypthome
 ```
 At this point, if you want to be really secure, overwrite the containers to erase existing content (which will take some time; I didn’t do this):
 ```
-    $ sudo dd if=/dev/zero of=/dev/mapper/cryptroot bs=16M status=progress
-    $ sudo dd if=/dev/zero of=/dev/mapper/crypthome bs=16M status=progress
+sudo dd if=/dev/zero of=/dev/mapper/cryptroot bs=16M status=progress
+sudo dd if=/dev/zero of=/dev/mapper/crypthome bs=16M status=progress
 ```
 Continuing:
 ```
-    $ sudo pvcreate /dev/mapper/cryptroot
-    $ sudo vgcreate vgroot /dev/mapper/cryptroot
-    $ sudo lvcreate -n lvroot -l 100%FREE vgroot
-    $ sudo pvcreate /dev/mapper/crypthome
-    $ sudo vgcreate vghome /dev/mapper/crypthome
-    $ sudo lvcreate -n lvhome -l 100%FREE vghome
+sudo pvcreate /dev/mapper/cryptroot
+sudo vgcreate vgroot /dev/mapper/cryptroot
+sudo lvcreate -n lvroot -l 100%FREE vgroot
+sudo pvcreate /dev/mapper/crypthome
+sudo vgcreate vghome /dev/mapper/crypthome
+sudo lvcreate -n lvhome -l 100%FREE vghome
 ```
 After these steps, you will have the following mounted encrypted partitions: `/dev/mapper/vgroot-lvroot` and `/dev/mapper/vghome-lvhome`.<br>
 **NB : Don't worry if you can't see them for now, it's normal as partitions are not mounted yet.**<br>
@@ -94,22 +94,22 @@ The rest of the installer process should be straight-forward.<br>
 
 First, note down the UUIDs of your encrypted partitions by running the following commands in a terminal (just open a second terminal beside, no need to note them on paper...)
 ```
-    $ sudo blkid </dev/DEV_ROOTFS>
-    $ sudo blkid </dev/DEV_HOME>
+ sudo blkid </dev/DEV_ROOTFS>
+ sudo blkid </dev/DEV_HOME>
 ```
 Next, mount the installed OS on `/mnt` and `chroot` into it:
 ```
-    $ sudo mount /dev/mapper/vgroot-lvroot /mnt
-    $ sudo mount </dev/DEV_BOOT> /mnt/boot
-    $ sudo mount /dev/mapper/vghome-lvhome /mnt/home
-    $ sudo mount --bind /dev /mnt/dev
-    $ sudo chroot /mnt
+ sudo mount /dev/mapper/vgroot-lvroot /mnt
+ sudo mount </dev/DEV_BOOT> /mnt/boot
+ sudo mount /dev/mapper/vghome-lvhome /mnt/home
+ sudo mount --bind /dev /mnt/dev
+ sudo chroot /mnt
 ```
 	The following commands are in the chrooted environment, and you are root in it. So `sudo` is not needed anymore.
 ```    
-    $ > mount -t proc proc /proc
-    $ > mount -t sysfs sys /sys
-    $ > mount -t devpts devpts /dev/pts
+ > mount -t proc proc /proc
+ > mount -t sysfs sys /sys
+ > mount -t devpts devpts /dev/pts
 ```
 Now, create a file named `/etc/crypttab` in the chrooted environment, e.g.
 ```
@@ -117,13 +117,13 @@ Now, create a file named `/etc/crypttab` in the chrooted environment, e.g.
 ```
 and write the following lines, while replacing **_<UUID_ROOTFS>_** and **_<UUID_HOME>_**:
 ```
-	# <target name> <source device> <key file> <options>
-	cryptroot UUID=<UUID_ROOTFS> none luks,discard
-	crypthome UUID=<UUID_HOME> none luks,discard
+# <target name> <source device> <key file> <options>
+cryptroot UUID=<UUID_ROOTFS> none luks,discard
+crypthome UUID=<UUID_HOME> none luks,discard
 ```
 Then, recreate the initramfs in the chrooted environment:
 ```
-	$ > update-initramfs -k all -c
+> update-initramfs -k all -c
 ```
 Finally, reboot out of the Live environment and into your newly installed Ubuntu 18.04 OS!<br>
 If everything is fine, it should ask your LUKS passphrase then launch Grub ! <br>
@@ -132,34 +132,34 @@ If everything is fine, it should ask your LUKS passphrase then launch Grub ! <br
 
 ## Install some softs for you daily work (at least curl is needed for the next steps)
 ```
-	sudo apt install -y vim curl zsh git fonts-hack-ttf 
-	chsh -s /usr/bin/zsh 
+sudo apt install -y vim curl zsh git fonts-hack-ttf 
+chsh -s /usr/bin/zsh 
 ```
 
 ## Tweak your system to best suit XPS 9570
 In order to do that, I used the excellent [JackHack96 script](https://github.com/JackHack96/dell-xps-9570-ubuntu-respin), with no modifications
 ```
-	sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/dell-xps-9570-ubuntu-respin/master/xps-tweaks.sh)"
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/dell-xps-9570-ubuntu-respin/master/xps-tweaks.sh)"
 ```
 
 # Change the grub theme to fit 4k display (if you have one)
 This theme has been designed by [arjmacedo](https://github.com/arjmacedo/grub_theme_hidpi)
 ```
-	sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/gocho1/laptop-conf/master/xps9570/ubuntu1804LTS/change-grub-theme4k.sh)"
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/gocho1/laptop-conf/master/xps9570/ubuntu1804LTS/change-grub-theme4k.sh)"
 ```
 
 ## Add experimental feature of gnome to get different scale for multiple monitors setup
 This way, you can use an external monitor properly with no DPI side effects.<br>
 Please note that you need to change the rendering server to **Ubuntu with Wayland** on the login screen (click on the wheel next to **Login** button
 ```
-	gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
 ```
 
 ## Install a cool font to handle prompt pictos (used for zsh prompts)
 ```
-	wget -O /tmp/Hack.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/Hack.zip
-	mkdir -p ~/.fonts && unzip /tmp/Hack.zip -d ~/.fonts && rm -f /tmp/Hack.zip
-	fc-cache -fv
+wget -O /tmp/Hack.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/Hack.zip
+mkdir -p ~/.fonts && unzip /tmp/Hack.zip -d ~/.fonts && rm -f /tmp/Hack.zip
+fc-cache -fv
 ```
 You may restart your station in order to get everything work
 
@@ -173,12 +173,12 @@ Check "Display bold text with light colors"<br>
 ## Download dotfiles
 These files are based on [tonylambiris](https://github.com/tonylambiris/dotfiles) and slightly customized
 ```
-	wget -O ~/.inputrc https://raw.githubusercontent.com/gocho1/dotfiles/master/dot.inputrc 
-	wget -O ~/.zshrc https://raw.githubusercontent.com/gocho1/dotfiles/master/dot.zshrc
+wget -O ~/.inputrc https://raw.githubusercontent.com/gocho1/dotfiles/master/dot.inputrc 
+wget -O ~/.zshrc https://raw.githubusercontent.com/gocho1/dotfiles/master/dot.zshrc
 ```
 Then you can start zsh
 ```
-	zsh
+zsh
 ```
 Zsh will prompt you to install some plugins.
 
@@ -187,14 +187,14 @@ This part is based on [Hikari9 comfortable-swipe](https://github.com/Hikari9/com
 
 ### Installation
 ```
-	sudo apt install -y libinput-tools libxdo-dev g++
-	git clone https://github.com/Hikari9/comfortable-swipe.git --depth 1 /tmp/comfortable-swipe
-	bash /tmp/comfortable-swipe/install && rm -rf /tmp/comfortable-swipe
+sudo apt install -y libinput-tools libxdo-dev g++
+git clone https://github.com/Hikari9/comfortable-swipe.git --depth 1 /tmp/comfortable-swipe
+bash /tmp/comfortable-swipe/install && rm -rf /tmp/comfortable-swipe
 ```
 ### Run
 ```
-	sudo gpasswd -a $USER $(ls -l /dev/input/event* | awk '{print $4}' | head --line=1)
-	comfortable-swipe autostart
+sudo gpasswd -a $USER $(ls -l /dev/input/event* | awk '{print $4}' | head --line=1)
+comfortable-swipe autostart ## should be already done
 ```
 If you need more details or config details about comfortable-swipe, then go to [Hikari9 github](https://github.com/Hikari9/comfortable-swipe)
 
@@ -220,15 +220,15 @@ In `Extensions`, activate ShellTile
 
 ## Install docker if you need it
 ```
-	sudo apt remove docker docker-engine docker.io containerd runc
-	curl -fsSL https://get.docker.com/ | sh
+sudo apt remove docker docker-engine docker.io containerd runc
+curl -fsSL https://get.docker.com/ | sh
 ```
 As displayed at the end of the previous script, you can add your user in docker group if you want to use docker without sudoing all the time<br>
 **Warning : Please note that this action will grant the ability to run containers which can be used to obtain root privileges on the docker host.**
 ```
-	sudo groupadd docker
-	sudo usermod -aG docker $USER
-	sudo systemctl restart docker
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo systemctl restart docker
 ```
 
 
@@ -237,41 +237,41 @@ As displayed at the end of the previous script, you can add your user in docker 
 ### Install KVM2 driver
 To install the KVM2 driver, first install and configure the prereqs:
 ```
-	sudo apt install libvirt-clients libvirt-daemon-system qemu-kvm
+sudo apt install libvirt-clients libvirt-daemon-system qemu-kvm
 ```
 Enable,start, and verify the libvirtd service has started.
 ```
-	sudo systemctl enable libvirtd.service
-	sudo systemctl start libvirtd.service
-	sudo systemctl status libvirtd.service
+sudo systemctl enable libvirtd.service
+sudo systemctl start libvirtd.service
+sudo systemctl status libvirtd.service
 ```
 Then you will need to add yourself to libvirt group (older distributions may use libvirtd instead)
 ```
-	sudo usermod -a -G libvirt $(whoami)	
+sudo usermod -a -G libvirt $(whoami)	
 ```
 Then to join the group with your current user session:
 ```
-	newgrp libvirt
+newgrp libvirt
 ```
 Now install the driver:
 ```
-	curl -LO https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-kvm2 && sudo install docker-machine-driver-kvm2 /usr/local/bin/
+curl -LO https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-kvm2 && sudo install docker-machine-driver-kvm2 /usr/local/bin/
 ```
 Get minikube binary
 ```
-	curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
 ```
 Here’s an easy way to add the Minikube executable to your path:
 ```
-	sudo cp minikube /usr/local/bin && rm minikube
+sudo cp minikube /usr/local/bin && rm minikube
 ```
 Then you can configure minikube to use kvm2 driver as default
 ```
-	minikube config set vm-driver kvm2
+minikube config set vm-driver kvm2
 ```
 And start minikube 
 ```
-	minikube start
+minikube start
 ```
 
 
