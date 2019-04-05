@@ -1,4 +1,4 @@
-![DELL XPS 9570](https://github.com/gocho1/laptop-conf/raw/master/xps9570/ubuntu1804LTS/xps9570.png)<br>
+![DELL XPS 9570](https://github.com/gocho1/dell-XPS-9570-conf/blob/master/xps9570.png)<br>
 
 This repo is intented for my own usage and corresponds to my needs.<br>
 Please note that is heavily based on things found on internet, like [gloveboxes github page](https://gloveboxes.github.io/Ubuntu-for-Azure-Developers/docs/dellxps15.html), and other linked pages below<br>
